@@ -4,7 +4,7 @@
 - 博客: [基于Docker搭建Hadoop集群之升级版](http://kiwenlau.com/2016/06/12/160612-hadoop-cluster-docker-update/)
 
 
-![alt tag](https://raw.githubusercontent.com/kiwenlau/hadoop-cluster-docker/master/hadoop-cluster-docker.png)
+![alt tag](https://github.com/DengZhuangSouthRd/hadoop-cluster-docker/blob/master/images/hadoop-cluster-docker.png)
 
 - 源使用Docker搭建集群，没有办法处理一个问题，就是每个hadoop节点的IP是由Docker启动之后采用DHCP的方案确定的！
 - 给出解决方案(1)
@@ -15,3 +15,13 @@
 > 对于每个启动的Docker，我们写一个内部程序，该程序的主要用户是获取主机的主机名和IP地址，之后将某个信息发送到指定的外部服务器中，
 通过外部服务器的信息汇集之后，统一写入到master节点中的对应位置
 
+- 在每个Docker中使用这个命令可以很好的获取IP和HostName
+```
+root@hadoop-master:~/monitor# more host-ip.sh
+#!/bin/bash
+
+ip=`ifconfig eth0 | grep 'inet addr:' | awk -F' ' '{ print $2  }' | awk -F':' '{ print $2  }'`
+name=`hostname`
+echo $ip
+echo $name
+```
