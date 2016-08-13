@@ -6,95 +6,12 @@
 
 ![alt tag](https://raw.githubusercontent.com/kiwenlau/hadoop-cluster-docker/master/hadoop-cluster-docker.png)
 
+- 源使用Docker搭建集群，没有办法处理一个问题，就是每个hadoop节点的IP是由Docker启动之后采用DHCP的方案确定的！
+- 给出解决方案(1)
+> 对于每个启动的Docker，我们都可以使用 **sudo docker inspect -format={{.xxxx.xxxxx}}** 取出指定的信息
+然后由外部的某个程序将数据写入到master节点中，同时这个步骤要在启动Hadoop集群的之前完成操作
 
-###3 Nodes Hadoop Cluster
-
-#####1. pull docker image
-
-```
-sudo docker pull kiwenlau/hadoop:1.0
-```
-
-#####2. clone github repository
-
-```
-git clone https://github.com/kiwenlau/hadoop-cluster-docker
-```
-
-#####3. create hadoop network
-
-```
-sudo docker network create --driver=bridge hadoop
-```
-
-#####4. start container
-
-```
-cd hadoop-cluster-docker
-sudo ./start-container.sh
-```
-
-**output:**
-
-```
-start hadoop-master container...
-start hadoop-slave1 container...
-start hadoop-slave2 container...
-root@hadoop-master:~# 
-```
-- start 3 containers with 1 master and 2 slaves
-- you will get into the /root directory of hadoop-master container
-
-#####5. start hadoop
-
-```
-./start-hadoop.sh
-```
-
-#####6. run wordcount
-
-```
-./run-wordcount.sh
-```
-
-**output**
-
-```
-input file1.txt:
-Hello Hadoop
-
-input file2.txt:
-Hello Docker
-
-wordcount output:
-Docker    1
-Hadoop    1
-Hello    2
-```
-
-###Arbitrary size Hadoop cluster
-
-#####1. pull docker images and clone github repository
-
-do 1~3 like section A
-
-#####2. rebuild docker image
-
-```
-sudo ./resize-cluster.sh 5
-```
-- specify parameter > 1: 2, 3..
-- this script just rebuild hadoop image with different **slaves** file, which pecifies the name of all slave nodes
-
-
-#####3. start container
-
-```
-sudo ./start-container.sh 5
-```
-- use the same parameter as the step 2
-
-#####4. run hadoop cluster 
-
-do 5~6 like section A
+- 给出解决方案(2)
+> 对于每个启动的Docker，我们写一个内部程序，该程序的主要用户是获取主机的主机名和IP地址，之后将某个信息发送到指定的外部服务器中，
+通过外部服务器的信息汇集之后，统一写入到master节点中的对应位置
 

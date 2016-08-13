@@ -17,7 +17,7 @@ do
 	                --hostname hadoop-slave$i \
                     -v /opt/hadoop/slave$i/datanode:/root/hdfs/datanode \
                     -v /opt/hadoop/slave$i/namenode:/root/hdfs/namenode \
-                    liuguiyangnwpu/hadoop:slave$i &> /dev/null
+                    kiwenlau/hadoop:1.0 &> /dev/null
 	i=$(( $i + 1 ))
 done 
 
@@ -31,7 +31,7 @@ sudo docker run -itd \
                 --hostname hadoop-master \
                 -v /opt/hadoop/master/datanode:/root/hdfs/datanode \
                 -v /opt/hadoop/master/namenode:/root/hdfs/namenode \
-                liuguiyangnwpu/hadoop:master &> /dev/null
+                kiwenlau/hadoop:1.0 &> /dev/null
 
 
 
