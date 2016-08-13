@@ -3,9 +3,6 @@
 - Blog: [Run Hadoop Cluster in Docker Update](http://kiwenlau.com/2016/06/26/hadoop-cluster-docker-update-english/)
 - 博客: [基于Docker搭建Hadoop集群之升级版](http://kiwenlau.com/2016/06/12/160612-hadoop-cluster-docker-update/)
 
-
-![alt tag](https://github.com/DengZhuangSouthRd/hadoop-cluster-docker/blob/master/images/hadoop-cluster-docker.png)
-
 - 源使用Docker搭建集群，没有办法处理一个问题，就是每个hadoop节点的IP是由Docker启动之后采用DHCP的方案确定的！
 - 给出解决方案(1)
 > 对于每个启动的Docker，我们都可以使用 **sudo docker inspect -format={{.xxxx.xxxxx}}** 取出指定的信息
@@ -25,3 +22,6 @@ name=`hostname`
 echo $ip
 echo $name
 ```
+
+- 同时想保证所有节点可以自动的加入和退出，我们需要在外部机器中写一个后台程序，一直在监控各个节点的运行情况。
+
