@@ -4,6 +4,6 @@ Host localhost
 Host 0.0.0.0
   StrictHostKeyChecking no
   
-Host hadoop-*
+Host *.phoenix.duc.com
    StrictHostKeyChecking no
    UserKnownHostsFile=/dev/null

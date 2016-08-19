@@ -25,3 +25,30 @@ echo $name
 
 - 同时想保证所有节点可以自动的加入和退出，我们需要在外部机器中写一个后台程序，一直在监控各个节点的运行情况。
 
+### Ambari-Server
+- 使用Ambari－Server进行集群的自动化运营和管理
+```bash
+pull a clean Docker
+wget a ambari-server repo.list
+apt-get Update
+apt-get install ambari-Server
+ambari-server setup
+ambari-sever start
+```
+- 具体的步骤参见[Ambari－Servere](https://cwiki.apache.org/confluence/display/AMBARI/Install+Ambari+2.2.2+from+Public+Repositories)
+- 配置启动的端口号
+```bash
+sudo docker run -it -p 8088:8080 imageid /bin/bash
+ambari-server start
+```
+- 在浏览器中输入
+```bash
+10.2.3.119:8088
+```
+- 在docker中还需配置一些最基本的软件服务
+```bash
+apt-get install vim
+vim /etc/profile 
+remove the comment
+apt-get install net-tools
+```
