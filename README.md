@@ -35,7 +35,7 @@ apt-get install ambari-Server
 ambari-server setup
 ambari-sever start
 ```
-- 具体的步骤参见[Ambari－Servere](https://cwiki.apache.org/confluence/display/AMBARI/Install+Ambari+2.2.2+from+Public+Repositories)
+- 具体的步骤参见[Ambari－Server](https://cwiki.apache.org/confluence/display/AMBARI/Install+Ambari+2.2.2+from+Public+Repositories)
 - 配置启动的端口号
 ```bash
 sudo docker run -it -p 8088:8080 imageid /bin/bash
