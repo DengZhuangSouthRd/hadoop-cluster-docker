@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo -e "\nbuild docker hadoop image\n"
-sudo docker build -t "dockerfile/ubuntu14.04:java" .
+echo -e "\nbuild docker ambari server node\n"
+sudo docker build -t "dockerfile/ubuntu14.04:ambari-server" .
 
 sudo docker images

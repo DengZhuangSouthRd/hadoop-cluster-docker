@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 
+import json
 import sys
 import socket
 
@@ -9,6 +10,7 @@ class Client:
         self.addr = (host, port)
         self.client = None
         self.isMaster = False
+        self.node_info = {}
     
     def createConnection(self):
         if self.client != None:
@@ -20,19 +22,29 @@ class Client:
             print msg.args
             self.client = None
 
+    def getLocalInfo(self):
+        hostname = socket.getfqdn(socket.gethostname())
+        if "master" in hostname:
+            self.isMaster = True
+            self.node_info["role"] = "master"
+        else:
+            self.isMaster = False
+            self.node_info["role"] = "slave"
+        hostip = socket.gethostbyname(hostname)
+        self.node_info["is_alive"] = "True"
+        self.node_info["hostname"] = hostname
+        self.node_info["ip"] = hostip
+        with open("~/.ssh/id_rsa.pub", 'r') as handle:
+            ssh_key_data = handle.readline()
+            self.node_info["id_rsa.pub"] = ssh_key_data
+        return json.dumps(self.node_info)
+    
     def sendData(self, data):
         if self.client == None:
             print "Send Data Failed !"
             return 
         local_name, local_ip = self.getLocalInfo()
         self.client.send(local_name + "#" + local_ip)
-
-    def getLocalInfo(self):
-        hostname = socket.getfqdn(socket.gethostname())
-        if "master" in hostname:
-            self.isMaster = True
-        hostip = socket.gethostbyname(hostname)
-        return hostname, hostip
 
     def revcData(self):
         if self.isMaster:

@@ -45,4 +45,27 @@ use format:
     info_str = json.dumps(info_dict)
     socket.send(info_str)
 ```
+- 客户端，还可以按时发送心跳包给服务器，告诉服务器工作是否正常
+
 ### 服务器
+- 服务器打开50091端口，接收信息
+- 每当服务器接到信息后，回给对应节点发送相应的ACK确认信息
+- 服务器也会主动发送给各个节点相应的集群的状态信息，数据格式如下：
+```bash
+{
+    "role" : "server",
+    "is_alive" : "True" | "False",
+    "hostname" : "server.hadoop.com",
+    "ip" : "10.2.3.119",
+    "username" : "root",
+    "id_rsa.pub" : "xxxxxx",
+    "clusers_ip" : [(ip, hostname),(ip, hostname),...,(ip, hostname)],
+    "clusers_ssh" : [(hostname, ssh-key),(hostname, ssh-key),(hostname, ssh-key)]
+}
+use format:
+    info_dict = {}
+    info_str = json.dumps(info_dict)
+    socket.send(info_str)
+```
+- 客户端接到数据后，回返回给服务器相应的状态信息，进行确认
+

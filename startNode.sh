@@ -33,7 +33,7 @@ autoStartDockerSlaveImage() {
             --dns ${DNSIP} \
             --name slave$i \
             --hostname slave$i \
-            liuguiyangnwpu/ubuntu:basic 
+            dockerfile/ubuntu14.04:ambari-agent
         i=$(( $i + 1 ))
     done 
 }
@@ -45,7 +45,7 @@ autoStartDockerMasterImage() {
         --dns ${DNSIP} \
         --name master \
         --hostname master \
-        liuguiyangnwpu/ubuntu:basic 
+        dockerfile/ubuntu14.04:ambari-agent
 }
 
 autoStartDockerAmbariImage() {
@@ -53,20 +53,10 @@ autoStartDockerAmbariImage() {
     sudo docker run -itd \
         --dns ${DNSIP} \
         --name ambari \
-        --hostname ambari \
+        --hostname ambariserver \
         -p 8088:8080 \
-        liuguiyangnwpu/ubuntu:ambari01
+        dockerfile/ubuntu14.04:ambari
     sleep 1
-}
-
-sendRsaPub2DockerSlave() {
-    NUM=$1
-    for i in `seq $((${NUM}-1))`
-    do
-        sudo docker exec slave${i} cat ${CURPATH}/id_rsa.pub > /root/.ssh/authorized_keys
-    done
-    sudo docker exec master cat ${CURPATH}/docker-container-hosts >> /etc/hosts
-    sudo docker exec ambari cat ${CURPATH}/docker-container-hosts >> /etc/hosts
 }
 
 DNSIP='127.0.0.1'
@@ -76,5 +66,4 @@ autoStartDockerMasterImage ${DNSIP}
 autoStartDockerSlaveImage 6 ${DNSIP}
 autoStartDockerAmbariImage ${DNSIP}
 autoCreateHostsFile
-sendRsaPub2DockerSlave 6
 sudo docker exec -it ambari /bin/bash
