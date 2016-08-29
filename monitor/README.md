@@ -46,6 +46,20 @@ use format:
     socket.send(info_str)
 ```
 - 客户端，还可以按时发送心跳包给服务器，告诉服务器工作是否正常
+```bash
+{
+    "role" : "slave" | "master",
+    "is_alive":"True"|"False",
+    "hostname": "slave1.hadoop.com",
+    "ip":"192.168.0.2",
+    "type" : "heartbeat",
+    "username" : "hadoop",
+}
+use format:
+    info_dict = {}
+    info_str = json.dumps(info_dict)
+    socket.send(info_str)
+```
 
 ### 服务器
 - 服务器打开50091端口，接收信息
@@ -68,4 +82,35 @@ use format:
     socket.send(info_str)
 ```
 - 客户端接到数据后，回返回给服务器相应的状态信息，进行确认
-
+```bash
+{
+    "role" : "server",
+    "is_alive" : "True" | "False",
+    "hostname" : "server.hadoop.com",
+    "ip" : "10.2.3.119",
+    "username" : "root",
+    "type" : "heartbeat"
+}
+use format:
+    info_dict = {}
+    info_str = json.dumps(info_dict)
+    socket.send(info_str)
+```
+- 服务器给客户端发送的其他形式的数据
+  - type : update(主要是针对集群中各个节点的状态发生了更新，使用类型的数据，可以使得client节点，更新配置信息)
+  ```bash
+    {
+        "role" : "server",
+        "is_alive" : "True" | "False",
+        "hostname" : "server.hadoop.com",
+        "ip" : "10.2.3.119",
+        "username" : "root",
+        "type" : "update",
+        "clusers_ip" : [(ip, hostname),(ip, hostname),...,(ip, hostname)],
+        "clusers_ssh" : [(hostname, ssh-key),(hostname, ssh-key),(hostname, ssh-key)]
+    }
+    use format:
+        info_dict = {}
+        info_str = json.dumps(info_dict)
+        socket.send(info_str)
+  ```

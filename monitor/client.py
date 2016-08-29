@@ -34,36 +34,49 @@ class Client:
         self.node_info["is_alive"] = "True"
         self.node_info["hostname"] = hostname
         self.node_info["ip"] = hostip
-        with open("~/.ssh/id_rsa.pub", 'r') as handle:
+        with open("/home/fighter/.ssh/id_rsa.pub", 'r') as handle:
             ssh_key_data = handle.readline()
             self.node_info["id_rsa.pub"] = ssh_key_data
         return json.dumps(self.node_info)
     
+    def sendHeartBeat(self):
+        if self.client == None:
+            print "Send Data Failed"
+            return 
+        
+        hostname = socket.getfqdn(socket.gethostname())
+        if "master" in hostname:
+            self.isMaster = True
+            self.node_info["role"] = "master"
+        else:
+            self.isMaster = False
+            self.node_info["role"] = "slave"
+        hostip = socket.gethostbyname(hostname)
+        self.node_info["is_alive"] = "True"
+        self.node_info["hostname"] = hostname
+        self.node_info["ip"] = hostip
+        self.node_info["type"] = "heartbeat"
+        self.client.send(json.dumps(self.node_info))
+
     def sendData(self, data):
         if self.client == None:
             print "Send Data Failed !"
             return 
-        local_name, local_ip = self.getLocalInfo()
-        self.client.send(local_name + "#" + local_ip)
+        client_Package = self.getLocalInfo()
+        self.client.send(client_Package)
 
     def revcData(self):
-        if self.isMaster:
-            while True:
-                recvdata = self.client.recv(1024)
-                if str(recvdata) == "FINISHED":
-                   self.closeClient() 
-                else:
-                    # hostname#hostip
-                    with open("/etc/hosts", 'a') as handle:
-                        info = recvdata.split("#")
-                        handle.write('    '.join([info[1], info[0]]))
-                        handle.write('\n')
-                        handle.flush()
-        else:
-            self.closeClient()
-
-    def closeClient(self):
-        self.client.close()
+        while True:
+            recvdata = self.client.recv(1024)
+            if str(recvdata) == "FINISHED":
+               self.closeClient() 
+            else:
+                # hostname#hostip
+                with open("/etc/hosts", 'a') as handle:
+                    info = recvdata.split("#")
+                    handle.write('    '.join([info[1], info[0]]))
+                    handle.write('\n')
+                    handle.flush()
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
