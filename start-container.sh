@@ -1,14 +1,20 @@
 #!/bin/bash
 
+if [ $# = 0 ]
+then
+	echo "Please specify the node number of hadoop cluster!"
+	exit 1
+fi
+
 # kill already run docker
 sudo docker rm -f `sudo docker ps -a -q`
 
 # the default node number is 3
-N=${1:-3}
+N=$1
 
 # start hadoop slave container
 i=1
-while [ $i -lt $N ]
+while [ $i -le $N ]
 do
 	echo "start hadoop-slave$i container..."
 	sudo docker run -itd \
@@ -17,7 +23,7 @@ do
 	                --hostname hadoop-slave$i \
                     -v /opt/hadoop/slave$i/datanode:/root/hdfs/datanode \
                     -v /opt/hadoop/slave$i/namenode:/root/hdfs/namenode \
-                    kiwenlau/hadoop:1.0 &> /dev/null
+                    dockerfile/ubuntu14.04:hadoop &> /dev/null
 	i=$(( $i + 1 ))
 done 
 
@@ -31,8 +37,7 @@ sudo docker run -itd \
                 --hostname hadoop-master \
                 -v /opt/hadoop/master/datanode:/root/hdfs/datanode \
                 -v /opt/hadoop/master/namenode:/root/hdfs/namenode \
-                kiwenlau/hadoop:1.0 &> /dev/null
-
+                dockerfile/ubuntu14.04:hadoop &> /dev/null
 
 
 sudo docker ps -a

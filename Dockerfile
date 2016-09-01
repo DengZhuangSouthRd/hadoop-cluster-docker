@@ -6,18 +6,40 @@ WORKDIR /root
 
 RUN apt-get -qq update
 RUN apt-get -qqy install openssh-server vim net-tools wget 
+RUN apt-get -qqy install openjdk-7-jdk
+RUN wget https://github.com/kiwenlau/compile-hadoop/releases/download/2.7.2/hadoop-2.7.2.tar.gz
+RUN tar -zxf hadoop-2.7.2.tar.gz
+RUN mv hadoop-2.7.2 /usr/local/hadoop
+RUN rm hadoop-2.7.2.tar.gz
+
+ENV JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
+ENV HADOOP_HOME=/usr/local/hadoop
+ENV PATH=$PATH:/usr/local/hadoop/bin:/usr/local/hadoop/sbin
+
 RUN ssh-keygen -t rsa -f ~/.ssh/id_rsa -P ''
 RUN cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 
-COPY config/ssh_config /tmp/
-RUN mv /tmp/ssh_config ~/.ssh/config
+RUN mkdir -p ~/hdfs/namenode && \
+    mkdir -p ~/hdfs/datanode && \
+    mkdir $HADOOP_HOME/logs
 
-RUN cd /etc/apt/sources.list.d/ && wget http://public-repo-1.hortonworks.com/ambari/ubuntu14/2.x/updates/2.2.2.0/ambari.list
-RUN apt-key adv --recv-keys --keyserver keyserver.ubuntu.com B9733A7A07513CAD \
-        apt-get update \
-        apt-get install ambari-server \
-        ambari-server setup 
+COPY config/* /tmp/
 
-RUN ambari-server start
+RUN mv /tmp/ssh_config ~/.ssh/config && \
+    mv /tmp/hadoop-env.sh /usr/local/hadoop/etc/hadoop/hadoop-env.sh && \
+    mv /tmp/hdfs-site.xml $HADOOP_HOME/etc/hadoop/hdfs-site.xml && \ 
+    mv /tmp/core-site.xml $HADOOP_HOME/etc/hadoop/core-site.xml && \
+    mv /tmp/mapred-site.xml $HADOOP_HOME/etc/hadoop/mapred-site.xml && \
+    mv /tmp/yarn-site.xml $HADOOP_HOME/etc/hadoop/yarn-site.xml && \
+    mv /tmp/slaves $HADOOP_HOME/etc/hadoop/slaves && \
+    mv /tmp/start-hadoop.sh ~/start-hadoop.sh && \
+    mv /tmp/run-wordcount.sh ~/run-wordcount.sh
+
+RUN chmod +x ~/start-hadoop.sh && \
+    chmod +x ~/run-wordcount.sh && \
+    chmod +x $HADOOP_HOME/sbin/start-dfs.sh && \
+    chmod +x $HADOOP_HOME/sbin/start-yarn.sh
+
+RUN /usr/local/hadoop/bin/hdfs namenode -format
 
 CMD [ "sh", "-c", "service ssh start; bash"]
