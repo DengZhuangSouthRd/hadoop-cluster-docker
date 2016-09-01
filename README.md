@@ -52,3 +52,8 @@ vim /etc/profile
 remove the comment
 apt-get install net-tools
 ```
+### 在本地配置hadoop集群的客户端程序
+1. 下载hadoop安装包，保证和集群中的hadoop版本一致
+2. 解压，并配置
+2.1 修改系统的bashrc脚本
+

@@ -7,10 +7,10 @@ WORKDIR /root
 RUN apt-get -qq update
 RUN apt-get -qqy install openssh-server vim net-tools wget 
 RUN apt-get -qqy install openjdk-7-jdk
-RUN wget https://github.com/kiwenlau/compile-hadoop/releases/download/2.7.2/hadoop-2.7.2.tar.gz
-RUN tar -zxf hadoop-2.7.2.tar.gz
-RUN mv hadoop-2.7.2 /usr/local/hadoop
-RUN rm hadoop-2.7.2.tar.gz
+
+COPY config/hadoop-2.7.2.tar.gz /tmp/
+RUN tar -zxf /tmp/hadoop-2.7.2.tar.gz -C/usr/local/
+RUN mv /usr/local/hadoop-2.7.2 /usr/local/hadoop
 
 ENV JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
 ENV HADOOP_HOME=/usr/local/hadoop
