@@ -34,8 +34,6 @@ startDockerCluster() {
                     --net=hadoop \
                     -p 50070:50070 \
                     -p 8088:8088 \
-                    -p 19888:19888 \
-                    -p 10020:10020 \
                     --name hadoop-master \
                     --hostname hadoop-master \
                     -v /opt/hadoop/master/datanode:/root/hdfs/datanode \

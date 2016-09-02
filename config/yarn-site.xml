@@ -4,12 +4,37 @@
         <name>yarn.nodemanager.aux-services</name>
         <value>mapreduce_shuffle</value>
     </property>
+    
     <property>
         <name>yarn.nodemanager.aux-services.mapreduce_shuffle.class</name>
         <value>org.apache.hadoop.mapred.ShuffleHandler</value>
     </property>
+    
     <property>
         <name>yarn.resourcemanager.hostname</name>
         <value>hadoop-master</value>
     </property>
+
+    <property>
+        <name>yarn.acl.enable</name>
+        <value>false</value>
+    </property>
+
+    <property>
+        <name>yarn.admin.acl</name>
+        <value>*</value>
+        <description>
+            ACL to set admins on the cluster. ACLs are of for comma-separated-usersspacecomma-separated-groups. Defaults to special value of * which means anyone. Special value of just space means no one has access.
+        </description>
+    </property>
+
+
+    <property>
+        <name>yarn.log-aggregation-enable</name>
+        <value>false</value>
+        <description>
+            Configuration to enable or disable log aggregation.
+        </description>
+    </property>
+
 </configuration>
